@@ -1,4 +1,5 @@
-from datetime import datetime
+import datetime
+from enum import Enum
 
 from flask_login import UserMixin, AnonymousUserMixin
 from sqlalchemy import func
@@ -7,9 +8,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from app.models.utils import ModelMixin
+from config import BaseConfig
 
 
 class User(db.Model, UserMixin, ModelMixin):
+    class AccountType(str, Enum):
+        FREE = "free"
+        PREMIUM = "premium"
+
+        def __repr__(self):
+            return self.value
 
     __tablename__ = "users"
 
@@ -17,8 +25,12 @@ class User(db.Model, UserMixin, ModelMixin):
     username = db.Column(db.String(60), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    account_type = db.Column(db.Enum(AccountType), default=AccountType.FREE)
+    subscribed_due = db.Column(db.DateTime,
+                               default=datetime.datetime.now() +
+                                       datetime.timedelta(days=BaseConfig.FREE_EXPIRATION_DAYS))
     activated = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.now)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now)
 
     @hybrid_property
     def password(self):

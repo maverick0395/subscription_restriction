@@ -1,8 +1,11 @@
+import datetime
+
 from flask import Blueprint, render_template, url_for, redirect, flash, request
 from flask_login import login_user, logout_user, login_required
 
 from app.models import User
 from app.forms import LoginForm, RegistrationForm
+from config import BaseConfig
 
 auth_blueprint = Blueprint("auth", __name__)
 
@@ -15,6 +18,7 @@ def register():
             username=form.username.data,
             email=form.email.data,
             password=form.password.data,
+            subscribed_due=datetime.datetime.now() + datetime.timedelta(days=BaseConfig.FREE_EXPIRATION_DAYS)
         )
         user.save()
         login_user(user)
@@ -43,4 +47,5 @@ def login():
 def logout():
     logout_user()
     flash("You were logged out.", "info")
-    return redirect(url_for("main.index"))
+    # return redirect(url_for("main.index"))
+    return redirect(url_for("auth.login"))

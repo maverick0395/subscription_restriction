@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h1>Your trial has expired</h1>
+  <hr>
+  <p>Choose your subscription plan if you want to continue using our services</p>
+  <form class="form-horizontal" method="POST" action="">
+    {{ form.hidden_tag()}}
+    {{form.plan_type}}
+    {{form.submit}}
+  </form>
+</div>
+
+{% endblock %}

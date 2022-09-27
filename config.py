@@ -13,6 +13,7 @@ class BaseConfig(object):
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
+    FREE_EXPIRATION_DAYS = int(os.environ.get("FREE_EXPIRATION_DAYS", "7"))
 
     @staticmethod
     def configure(app):
